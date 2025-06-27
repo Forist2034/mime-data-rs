@@ -54,9 +54,9 @@ mod ext_map {
     include!(concat!(env!("OUT_DIR"), "/ext_map.rs"));
 }
 
-pub fn lookup_mime_info(m: &'static str) -> Option<&'static MimeData> {
+pub fn lookup_mime_info(m: &str) -> Option<&'static MimeData> {
     ty_map::TY_MAP.get(m).copied()
 }
-pub fn lookup_extension_info(ext: &'static str) -> Option<ExtensionInfo> {
+pub fn lookup_extension_info(ext: &str) -> Option<ExtensionInfo> {
     ext_map::EXT_MAP.get(ext).map(|m| ExtensionInfo(m))
 }
