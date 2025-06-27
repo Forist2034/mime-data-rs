@@ -1,0 +1,19 @@
+[package]
+name = "mime-data"
+version = "0.1.0"
+description = "Database of mime types and information about them"
+homepage = "https://github.com/Forist2034/mime-data-rs"
+repository = "https://github.com/Forist2034/mime-data-rs"
+keywords = ["mime", "media-extensions", "media-types", "no_std"]
+readme = "README.md"
+edition = "2024"
+license = "MIT"
+include = ["/data/db.json", "/src", "/build.rs", "/LICENSE", "/README.md"]
+
+[dependencies]
+phf = { version = "0.12.1", default-features = false }
+
+[build-dependencies]
+phf_codegen = "0.12.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
