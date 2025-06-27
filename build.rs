@@ -38,17 +38,22 @@ impl<'a> serde::Deserialize<'a> for VecMap<'a> {
     }
 }
 
-struct RefArray<'a>(&'a [&'a str]);
-impl<'a> std::fmt::Debug for RefArray<'a> {
+#[derive(Debug)]
+struct Mime<'a>(&'a str);
+#[derive(Debug)]
+struct Extension<'a>(&'a str);
+struct Extensions<'a>(&'a [Extension<'a>]);
+impl<'a> std::fmt::Debug for Extensions<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_char('&')?;
-        std::fmt::Debug::fmt(self.0, f)
+        f.write_str("Extensions(&")?;
+        std::fmt::Debug::fmt(self.0, f)?;
+        f.write_str(")")
     }
 }
 #[derive(Debug)]
 struct MimeData<'a> {
-    mime: &'a str,
-    extensions: RefArray<'a>,
+    mime: Mime<'a>,
+    extensions: Extensions<'a>,
     compressible: Option<bool>,
 }
 
@@ -69,8 +74,8 @@ fn main() {
         .0
         .iter()
         .map(|(mime, info)| MimeData {
-            mime,
-            extensions: RefArray(&info.extensions),
+            mime: Mime(*mime),
+            extensions: Extensions(unsafe { std::mem::transmute(info.extensions.as_slice()) }),
             compressible: info.compressible,
         })
         .collect();
@@ -100,7 +105,7 @@ fn main() {
         out_dir.join("data.rs"),
         format!(
             "{};\n\npub(crate) static {}: [crate::MimeData; {}] = {data_array:#?};",
-            "use crate::MimeData",
+            "use crate::{Mime, MimeData, Extension, Extensions}",
             data_var_name!(),
             data_array.len()
         ),
