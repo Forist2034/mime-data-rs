@@ -39,11 +39,13 @@ impl<'a> serde::Deserialize<'a> for VecMap<'a> {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 struct Mime<'a>(&'a str);
 #[derive(Debug)]
+#[allow(dead_code)]
 struct Extension<'a>(&'a str);
 struct Extensions<'a>(&'a [Extension<'a>]);
-impl<'a> std::fmt::Debug for Extensions<'a> {
+impl std::fmt::Debug for Extensions<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str("Extensions(&")?;
         std::fmt::Debug::fmt(self.0, f)?;
@@ -51,6 +53,7 @@ impl<'a> std::fmt::Debug for Extensions<'a> {
     }
 }
 #[derive(Debug)]
+#[allow(dead_code)]
 struct MimeData<'a> {
     mime: Mime<'a>,
     extensions: Extensions<'a>,
@@ -74,8 +77,10 @@ fn main() {
         .0
         .iter()
         .map(|(mime, info)| MimeData {
-            mime: Mime(*mime),
-            extensions: Extensions(unsafe { std::mem::transmute(info.extensions.as_slice()) }),
+            mime: Mime(mime),
+            extensions: Extensions(unsafe {
+                std::mem::transmute::<&[&str], &[Extension<'_>]>(info.extensions.as_slice())
+            }),
             compressible: info.compressible,
         })
         .collect();

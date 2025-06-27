@@ -55,8 +55,8 @@ mod ext_map {
 }
 
 pub fn lookup_mime_info(m: &'static str) -> Option<&'static MimeData> {
-    ty_map::TY_MAP.get(m).map(|m| *m)
+    ty_map::TY_MAP.get(m).copied()
 }
 pub fn lookup_extension_info(ext: &'static str) -> Option<ExtensionInfo> {
-    ext_map::EXT_MAP.get(ext).map(|m| ExtensionInfo(*m))
+    ext_map::EXT_MAP.get(ext).map(|m| ExtensionInfo(m))
 }
